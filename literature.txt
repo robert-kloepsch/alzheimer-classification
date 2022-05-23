@@ -1,3 +1,6 @@
 
 Articles with use of same data
 https://www.sciencedirect.com/science/article/pii/S2352914816300491
+
+Methods:
+https://arxiv.org/pdf/1803.02544.pdf
