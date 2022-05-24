@@ -20,7 +20,11 @@ while os.listdir(path + "/Alzheimer_s Dataset")[1] != "test":
     path = input("Wrong directory, please enter the correct path: ")
 
 # Define validation split using User input 
-validation_split = int(input("Please enter validation split: "))
+validation_split = int(input("Please enter a validation split: "))
+
+# Define random seed
+random_seed = int(input("Please enter a random seed: "))
+random.seed(random_seed)
 
 # Define paths and image size
 path = path + "/Alzheimer_s Dataset"
@@ -34,10 +38,10 @@ if os.path.isdir(path_test) == True:
     shutil.rmtree(path_test, ignore_errors=True)
     if os.path.isdir(path_test) == False:
         print("Successfully removed 'test' data")
-        time.sleep(1)
+        time.sleep(0.3)
 else:
     print("No Test data directory found")
-    time.sleep(1)
+    time.sleep(0.3)
 
 print("-" * 35)
 
@@ -49,30 +53,30 @@ new_folders = ["1_not_demented", "2_very_mild_demented", "3_mild_demented", "4_m
 if os.path.isdir(path + "/validation") == False:
     os.mkdir(path + "/validation")
     print("Successfully created 'validation' folder")
-    time.sleep(1)
+    time.sleep(0.3)
 else:
     print("'Validation' folder already exists")
-    time.sleep(1)
+    time.sleep(0.3)
 
 # Create subfolders for validation set
 for i in new_folders:
     if os.path.isdir(path + "/validation/" + i) == False:
         os.mkdir(path + "/validation/" + i)
         print(f"Successfully created '{i}' for 'validation' folder")
-        time.sleep(1)
+        time.sleep(0.3)
     else:
         print(f"'{i}' for 'validation' folder already exists")
-        time.sleep(1) 
+        time.sleep(0.3) 
 
 # renaming directories
 for i in range(0, len(old_folders)):
     if os.path.isdir(path_train + old_folders[i]) == True:
         os.rename(path_train + old_folders[i], path_train + new_folders[i])
         print(f"'{old_folders[i]}' --> '{new_folders[i]}' \u2714")
-        time.sleep(1) 
+        time.sleep(0.3) 
     else:
         print(f"'{old_folders[i]}' already renamed.")
-        time.sleep(1) 
+        time.sleep(0.3) 
         continue
 
 print("-" * 35)
@@ -81,18 +85,18 @@ print("-" * 35)
 for classes in new_folders:
     if len(os.listdir(path + "/validation/" + classes)) > 0:
         print(f"Folder '{classes}' not empty. Please remove all files and try again")
-        time.sleep(1) 
+        time.sleep(0.3) 
     else:
         image_list = os.listdir(path_train + classes)
         random.shuffle(image_list)
         for file in range (0, int((len(image_list) / 100) * validation_split) + 1):
             shutil.move(path_train + classes + "/" + image_list[file], path + "/validation/" + classes + "/" + image_list[file])
         print(f"Successfully moved {int((len(image_list) / 100) * validation_split)} images from 'train' to 'validation folder' for {classes}")
-        time.sleep(1) 
+        time.sleep(0.3) 
 
 # Print success message
 print(f"{bcolors.OKGREEN}Successfully created correct folder structure. Use 'tf.keras.preprocessing.image_dataset_from_directory' to load the data properly{bcolors.ENDC}")
-time.sleep(1) 
+time.sleep(0.3) 
 print("-" * 35)
 
 # Show final folder structure
