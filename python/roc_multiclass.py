@@ -43,7 +43,7 @@ def roc_multiclass(y_pred,y_val,target_list,variant):
         for (idx, c_label) in enumerate(target_list):
             fpr, tpr, thresholds = roc_curve(y_val[:,idx].astype(int), y_pred[:,idx])
             c_ax.plot(fpr, tpr, label = '%s (AUC:%0.2f)'  % (c_label, auc(fpr, tpr)))
-        c_ax.plot(fpr, fpr, 'b',linestyle='dashed', label = 'Random Guessing')
+        c_ax.plot(fpr, fpr, 'b',linestyle='dotted', label = 'Random Guessing')
         return roc_auc_score(y_val, y_pred, average=average)
 
     # using the function
