@@ -1,56 +1,60 @@
-from fastapi import File, UploadFile, FastAPI
+from fastapi import UploadFile, FastAPI
 import uvicorn
 import tensorflow as tf
 import cv2
 import numpy as np
-from io import BytesIO
-from PIL import Image
 
-app = FastAPI(title='Hello world')
+app = FastAPI(title="Alzheimers - MRI Image Analysis")
 
-@app.get('/index')
-def hello_world():
-    return "hello world"
+@app.get('/')
+async def Welcome():
+    return "Welcome to the Brains Team. Here we are trying to support medical alzheimer's diagnostics. You can show us an MRI brain scan and we try our best to estimate if that image indicates early signs of alzheimer's disease"
 
 #load model function
 def load_model():
-    model = tf.keras.models.load_model('/Users/stephanbremser/neuefische/alzheimer-classification/deploy/model_binary')
+    model = tf.keras.models.load_model('./model_binary')
     return model
-model = load_model()
 
-#load image
-def read_imagefile():
-    image = cv2.imread(file)
-    if image.shape != (1, 208, 176, 3):
-        image = image[np.newaxis,:,:,:]
-    return image
+
+#check image shape to fit into model
+def shape_image(image_array):
+    
+    if image_array.shape != (1, 208, 176, 3):
+        image_array = image_array[np.newaxis,:,:,:]
+    return image_array
+
+#interpret prediction output
+def interpret_pred(prediction):
+
+    if prediction >= 0.5:
+        return str("alzheimer :_(")
+    else:
+        return str("HEALTHY! YAAAYYY !! no shrinking :-D!")
 
 #predict function
-@app.post("/predict/image")
-def predict(image):
-    image = read_imagefile(image)
-    
-    pred = model.predict(image)
+def predict(image_array,model):
+        
+    pred = model.predict(image_array)
     
     return pred
 
-@app.post("/uploadfile/")
-async def create_upload_file(file: UploadFile):
+@app.post("/MRI_Image_Analysis/")
+async def analyse_MRI_img(file: UploadFile):
+    
+    #load uploaded image
     image = await file.read()
-    nparr = np.fromstring(image, np.uint8)
-    img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-    x = img.shape
+    # convert to numpy array
+    image = np.asarray(bytearray(image))
+    # decode byte-array to usable ndarray
+    img = cv2.imdecode(image, cv2.IMREAD_COLOR)
     
-   # t = x.tolist()
-    
-    #x = np.array(Image.open(BytesIO(image)))
-    #x = x.shape
-    #t = x.tolist()
-    #image = read_imagefile(image)
-    #prediction = predict(image)
-    #print(prediction)
-    return x
+    img = shape_image(img)
+
+    model = load_model()
+    pred = predict(img,model)
+    diagnosis = interpret_pred(pred)
+    return diagnosis
 
     
 
-uvicorn.run(app, debug=True)
+#uvicorn.run(app, debug=True)
