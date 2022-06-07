@@ -10,3 +10,7 @@ testbook==0.4.2
 mlflow==1.20.2
 parsenvy==3.0.2
 black==21.9b0
+tensorflow-macos==2.8.0
+tensorflow-metal==0.4.0
+Keras==2.8.0
+tensorflow-hub==0.12.0

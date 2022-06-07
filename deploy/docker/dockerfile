@@ -1,0 +1,24 @@
+
+FROM python:3.9.8-slim-buster
+
+
+RUN pip install joblib
+
+COPY ./model_binary/ ./model_binary/
+COPY ./main.py .
+
+RUN python -m pip install --upgrade pip
+
+RUN pip install --upgrade protobuf==3.20.0
+RUN pip install fastapi
+RUN pip install uvicorn
+RUN pip install tensorflow==2.9.0
+RUN pip install numpy
+RUN pip install python-multipart
+RUN pip install Pillow
+
+
+
+EXPOSE 8000:8000
+
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
