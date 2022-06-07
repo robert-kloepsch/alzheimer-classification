@@ -1,7 +1,6 @@
 
-FROM python:3.9.8
-#FROM --platform=linux/amd64 python:3.9.8
-FROM --platform=linux/arm64 python:3.9.8
+FROM python:3.9.8-slim-buster
+
 
 RUN pip install joblib
 
@@ -10,14 +9,14 @@ COPY ./main.py .
 
 RUN python -m pip install --upgrade pip
 
+RUN pip install --upgrade protobuf==3.20.0
 RUN pip install fastapi
 RUN pip install uvicorn
-RUN pip install tensorflow-macos==2.8.0
-RUN pip install tensorflow-metal==0.4.0
-RUN pip install tensorflow-hub==0.12.0
-RUN pip install Keras==2.8.0
-RUN pip install opencv-python
+RUN pip install tensorflow==2.9.0
 RUN pip install numpy
+RUN pip install python-multipart
+RUN pip install Pillow
+
 
 
 EXPOSE 8000:8000

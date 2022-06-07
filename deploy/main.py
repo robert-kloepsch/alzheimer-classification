@@ -1,8 +1,9 @@
 from fastapi import UploadFile, FastAPI
 import uvicorn
 import tensorflow as tf
-import cv2
+from io import BytesIO
 import numpy as np
+from PIL import Image
 
 app = FastAPI(title="Alzheimers - MRI Image Analysis")
 
@@ -41,20 +42,18 @@ def predict(image_array,model):
 @app.post("/MRI_Image_Analysis/")
 async def analyse_MRI_img(file: UploadFile):
     
+    
     #load uploaded image
     image = await file.read()
-    # convert to numpy array
-    image = np.asarray(bytearray(image))
-    # decode byte-array to usable ndarray
-    img = cv2.imdecode(image, cv2.IMREAD_COLOR)
-    
-    img = shape_image(img)
+    image = Image.open(BytesIO(image))
+    image = image.convert("RGB")                    #to keep three channels
+
+    #convert to array
+    image = np.array(image)
+        
+    image = shape_image(image)
 
     model = load_model()
-    pred = predict(img,model)
+    pred = predict(image,model)
     diagnosis = interpret_pred(pred)
     return diagnosis
-
-    
-
-#uvicorn.run(app, debug=True)
