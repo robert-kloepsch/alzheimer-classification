@@ -66,9 +66,9 @@ def precision_recall_multiclass(y_pred,y_val,target_list):
         print(c_label, "Precision:", precisions[idx])
     print("-------#####-------")
     print("\n")
-    print("-----Precisions-----")
+    print("-----Accuracy-----")
     for idx, c_label in enumerate(target_list):
-        print(c_label, "Precision:", accuracies[idx])
+        print(c_label, "Accuracy:", accuracies[idx])
     print("-------#####-------")
     print("\n")
     print("-----Macro Recall and Precisions-----")
