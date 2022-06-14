@@ -4,7 +4,7 @@ import numpy as np
 from sklearn.utils import shuffle
 import tensorflow as tf
 
-def load_oasis_set():
+def load_oasis_set_win():
     path1 = "F:\\MRI_class\\data"
     path2 = path1+"\\horizontal_masked"
 

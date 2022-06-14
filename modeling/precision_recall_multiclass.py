@@ -16,6 +16,7 @@ def precision_recall_multiclass(y_pred,y_val,target_list):
     #collect recalls and precisions
     recalls = []
     precisions = []
+    accuracies = []
 
     #convert prediction probas to absolute values (0,1)
     y_pred_absolutes = []
@@ -42,6 +43,7 @@ def precision_recall_multiclass(y_pred,y_val,target_list):
             # collect scores
             recalls.append(recall_score(y_val[:,idx], y_pred_absolutes[:,idx]))
             precisions.append(precision_score(y_val[:,idx], y_pred_absolutes[:,idx]))
+            accuracies.append(precision_score(y_val[:,idx], y_pred_absolutes[:,idx]))
         
 
     # using the function
@@ -63,3 +65,13 @@ def precision_recall_multiclass(y_pred,y_val,target_list):
     for idx, c_label in enumerate(target_list):
         print(c_label, "Precision:", precisions[idx])
     print("-------#####-------")
+    print("\n")
+    print("-----Precisions-----")
+    for idx, c_label in enumerate(target_list):
+        print(c_label, "Precision:", accuracies[idx])
+    print("-------#####-------")
+    print("\n")
+    print("-----Macro Recall and Precisions-----")
+    print("Macro recall:",recall_score(y_val,y_pred_absolutes, average="macro"))
+    print("Macro recall:",precision_score(y_val,y_pred_absolutes, average="macro"))
+    print("------------#####------------")
