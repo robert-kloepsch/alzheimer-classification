@@ -24,12 +24,13 @@ from PyQt6.QtCore import (
                         Qt
 )
 
-model_path = "/Users/stephanbremser/neuefische/alzheimer-classification/deploy/docker/model_binary/"
+model_path = "F:\\alzheimer-classification\\deploy\\model\\model_1.h5"
 
 class App(QWidget):
 
     def __init__(self):
         super().__init__()
+        self.setFixedSize(250, 300)
 
         layout = QVBoxLayout()
                 
@@ -37,7 +38,7 @@ class App(QWidget):
         self.button1.clicked.connect(self.openFileAndPredict)
         layout.addWidget(self.button1)
 
-        self.picture = QLabel("")
+        self.picture = QLabel("Please Select an Image")
         self.picture.setAlignment(Qt.AlignmentFlag.AlignCenter) 
         layout.addWidget(self.picture)
 
@@ -87,11 +88,17 @@ class App(QWidget):
 
     #interpret prediction output function
     def interpret_pred(self, prediction):
-        
-        if prediction >= 0.5:
-            return str("alzheimer :_(")
-        else:
-            return str("HEALTHY! YAAAYYY !! no shrinking :-D!")
+        pred = np.argmax(prediction[0])
+        proba = prediction[0][pred]*100
+        if pred == 0:
+            output="-Healthy-"+"\n"+"Certaintly: "+str(proba)[:6]+"%"
+            return str(output)
+        if pred == 1:
+            output="-Very Mild AD- indications"+"\n"+"Certaintly: "+str(proba)[:6]+"%"
+            return str(output)
+        if pred == 2:
+            output="-Mild AD- indications"+"\n"+"Certaintly: "+str(proba)[:6]+"%"
+            return str(output)
 
 
 #load the model
