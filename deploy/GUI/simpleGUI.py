@@ -14,6 +14,8 @@ from PyQt6.QtWidgets import (
                             , QPushButton
                             , QVBoxLayout
                             , QLabel
+                            , QMessageBox
+                            
 )
 
 from PyQt6.QtGui import (
@@ -24,15 +26,18 @@ from PyQt6.QtCore import (
                         Qt
 )
 
-model_path = "F:\\alzheimer-classification\\deploy\\model\\model_1.h5"
 
 class App(QWidget):
 
     def __init__(self):
         super().__init__()
-        self.setFixedSize(250, 300)
+        self.setFixedSize(300, 350)
 
         layout = QVBoxLayout()
+
+        self.button1 = QPushButton("Select Tensorflow Model")
+        self.button1.clicked.connect(self.getModel)
+        layout.addWidget(self.button1)
                 
         self.button1 = QPushButton("Select Image")
         self.button1.clicked.connect(self.openFileAndPredict)
@@ -53,19 +58,56 @@ class App(QWidget):
         self.setLayout(layout)
         self.setWindowTitle("Alzheimer's Early Detection")
 
+        self.model = 0
 
-    #main function
+    # massagebox if no model is selected
+    def showDialog(self):
+        self.msgBox = QMessageBox()
+        self.msgBox.setIcon(QMessageBox.Icon.Information)
+        self.msgBox.setText("Please first select a Model to load")
+        self.msgBox.setWindowTitle("No Model")
+        self.msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        
+        returnValue = self.msgBox.exec()
+        if returnValue == QMessageBox.StandardButton.Ok:
+            print('OK clicked')
+    
+    
+
+    #main function - load image
     def openFileAndPredict(self):
+        
+        if self.model == 0:
+            self.showDialog()
+            return
+
         filename, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","All Files (*)")
         
+        # makes pop up -cancel- NOT result in error
+        if filename == "":
+            return
+
         self.picture.setPixmap(QPixmap(filename))
         
         #load image and predict
         image = self.load_image(filename)
-        pred = self.predict(image)
+        pred = self.predict(image, self.model)
         
         #generate output in widget
         self.prediction.setText(self.interpret_pred(pred))
+
+        
+    #secondary function - load model
+    def getModel(self):
+        filename, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","All Files (*.h5)")
+
+        if filename == "":
+            return
+
+        # makes pop up -cancel- NOT result in error
+        self.model = load_model(filename)
+
+        return self.model
 
     #load image function
     def load_image(self, filename):
@@ -78,10 +120,8 @@ class App(QWidget):
         return image
 
     #predict function
-    def predict(self, image_array):
+    def predict(self, image_array, model):
 
-        model = load_model(model_path)
-        print(image_array.shape)
         pred = model.predict(image_array)
     
         return pred
